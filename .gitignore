@@ -1,0 +1,17 @@
+.gitignore
+.git
+build/*
+dist/*
+*.egg-info
+.ropeproject/config.py
+.ropeproject/globalnames
+.ropeproject/objectdb
+*.pyc
+*.so
+*.dylib
+*.dll
+*.fai
+*.gzi
+sequenza/_rust_pileup2acgt*
+*.DS_Store
+docs/_*

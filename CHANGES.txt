@@ -1,0 +1,7 @@
+Unreleased
+----------
+
+- Added a Rust-accelerated `pileup2acgt` path for uncompressed mpileup
+  input/output, with Python fallback for gzip usage.
+- Added benchmark tooling to compare Rust output against the Python fallback
+  and enforce a minimum 3x speedup.
