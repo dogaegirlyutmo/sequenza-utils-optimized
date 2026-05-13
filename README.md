@@ -30,6 +30,15 @@ rust:   0.255s
 speedup: 12.58x
 ```
 
+On a full `chr20` run from the public 1000 Genomes HG03007 CRAM, the Rust path
+processed the same mpileup stream 8.53x faster than the Python fallback:
+
+```
+python: 456.00s
+rust:    53.45s
+speedup: 8.53x
+```
+
 See [OPTIMIZATION.md](OPTIMIZATION.md) for the implementation details and
 benchmark procedure.
 
