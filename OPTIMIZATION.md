@@ -84,6 +84,54 @@ speedup: 12.58x
 This run shows a 12.58x speedup for the benchmarked `pileup2acgt` workload,
 with byte-identical output between the Python fallback and Rust path.
 
+## Full chr20 CRAM validation
+
+A full-chromosome validation was run against public 1000 Genomes 30X sample
+HG03007 using the local CRAM and CRAI files:
+
+```text
+/private/tmp/sequenza_public_full/HG03007.final.cram
+/private/tmp/sequenza_public_full/HG03007.final.cram.crai
+```
+
+Reference:
+
+```text
+/private/tmp/sequenza_public_full/GRCh38_full_analysis_set_plus_decoy_hla.fa
+```
+
+`samtools idxstats` reported the following `chr20` coverage in the CRAM:
+
+```text
+chr20 length: 64,444,167
+mapped reads: 15,985,356
+unmapped reads: 26,494
+```
+
+The benchmark streamed `samtools mpileup` for `chr20` through both
+implementations and compressed the resulting TSV output. The Python fallback was
+forced with `SEQUENZA_DISABLE_RUST=1`; the Rust run used the default accelerated
+path.
+
+Result:
+
+```text
+python: 456.00s
+rust: 53.45s
+speedup: 8.53x
+time reduction: 88.3%
+```
+
+Output validation:
+
+```text
+python output lines: 63,712,525
+rust output lines: 63,712,525
+python md5: bb632e00a2d6dec73af68a37771dcf8e
+rust md5: bb632e00a2d6dec73af68a37771dcf8e
+cmp: identical
+```
+
 ## Compatibility notes
 
 - Disable the Rust path with `SEQUENZA_DISABLE_RUST=1`.
