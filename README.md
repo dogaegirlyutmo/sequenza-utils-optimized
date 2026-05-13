@@ -33,6 +33,49 @@ speedup: 12.58x
 See [OPTIMIZATION.md](OPTIMIZATION.md) for the implementation details and
 benchmark procedure.
 
+Using the Rust path
+-------------------
+
+Install Rust first. On macOS with Homebrew:
+
+```
+brew install rust
+```
+
+Then install this fork in a local virtual environment:
+
+```
+git clone https://github.com/dogaegirlyutmo/sequenza-utils-optimized.git
+cd sequenza-utils-optimized
+python3.11 -m venv .venv
+.venv/bin/python -m pip install --no-build-isolation -e .
+```
+
+Run `pileup2acgt` normally:
+
+```
+.venv/bin/sequenza-utils pileup2acgt --mpileup input.mpileup -o output.acgt
+```
+
+The Rust implementation is used automatically when:
+
+- `rustc` is available;
+- the input and output are uncompressed, non-`.gz` paths;
+- `SEQUENZA_DISABLE_RUST` is not set.
+
+The command falls back to the Python implementation for gzip input/output or
+when Rust compilation/execution is unavailable. To force the Python path:
+
+```
+SEQUENZA_DISABLE_RUST=1 .venv/bin/sequenza-utils pileup2acgt --mpileup input.mpileup -o output.acgt
+```
+
+To run the benchmark:
+
+```
+./benchmarks/bench_pileup2acgt.sh
+```
+
 >The package uses external software that needs to be installed separately:
 > `samtools` >= 1.3.1 and `tabix`.
 >
@@ -42,39 +85,55 @@ benchmark procedure.
 Install
 -------
 
-**From Pypi**
+**From PyPI**
 
 ```
 pip install sequenza-utils
 ```
 
-or pulling the latest version from git:
+The PyPI package is the upstream `sequenza-utils` release and may not include
+the Rust-accelerated `pileup2acgt` changes from this fork.
+
+**From this fork**
 
 ```
-pip install git+ssh://git@bitbucket.org/sequenzatools/sequenza-utils.git
+pip install git+https://github.com/dogaegirlyutmo/sequenza-utils-optimized.git
 ```
 
 **From Sources**
 
-Installing from sources using the `setup.py` script it's not recommended, instead you could use `pip`
-as described above.
-
-However, while developing and testing new functionalities you could use:
-
+For development and local testing, use an editable install:
 
 ```
-git clone https://bitbucket.org/sequenzatools/sequenza-utils
-pip install ./sequenza-utils
+git clone https://github.com/dogaegirlyutmo/sequenza-utils-optimized.git
+cd sequenza-utils-optimized
+python3.11 -m venv .venv
+.venv/bin/python -m pip install --no-build-isolation -e .
 ```
 
-or with `setup.py`
-
+Check the CLI:
 
 ```
-git clone https://bitbucket.org/sequenzatools/sequenza-utils
-cd sequenza-utils
-python setup.py test
-python setup.py install
+.venv/bin/sequenza-utils --help
+```
+
+Build extension artifacts in place:
+
+```
+.venv/bin/python setup.py build_ext --inplace
+```
+
+Run the benchmark for the Rust-accelerated `pileup2acgt` path:
+
+```
+./benchmarks/bench_pileup2acgt.sh
+```
+
+The full test suite uses `unittest` and requires external tools such as
+`samtools`, `tabix`, and `bwa`:
+
+```
+.venv/bin/python -m unittest discover test
 ```
 
 Docs
